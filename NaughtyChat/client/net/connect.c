@@ -8,6 +8,8 @@
 #include<ctype.h>
 #include<pthread.h>
 #include<unistd.h>
+#include"../../head/dataform.h"
+#include"../../head/func.h"
 
 char* getip(){
 	char i[6];
@@ -32,13 +34,16 @@ int movedata(int sock,datas*datasend,datas*datarecv){
 	datas* tmpdata=(datas*)malloc(sizeof(datas));
 	while(1){
 		if(strcmp(datasend->confirm,"")!=0){
+			if(strcmp(datasend->confirm,"Quit")==0){
+				return 0;
+			}
 			send(sock,datasend,sizeof(datas),0);
-			datas->confirm="";
+			datasend->confirm="";
 		}	
 		recv(sock,tmpdata,sizeof(datas),0);
 		if(strcmp(tmpdata->confirm,"")!=0){
-			memcpy(datarecv,tmpdata,sizeof(datas);
-			}
+			memcpy(datarecv,tmpdata,sizeof(datas));
+		
 		}
 	}
 }
