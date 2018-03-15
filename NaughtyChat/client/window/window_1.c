@@ -6,11 +6,22 @@
 #include"../../head/dataform.h"
 #include<string.h>
 
+void* commitmessage(GtkWidget*b,inthread*nai){
+	
+	strcpy(nai->send->recver,gtk_entry_get_text((GtkEntry*)(nai->g1)));	
+	strcpy(nai->send->message,gtk_entry_get_text((GtkEntry*)(nai->g2)));
+	strcpy(nai->send->confirm,nai->sign);
+	gtk_entry_set_text((GtkEntry*)(nai->g2),"");
+}
+
 int gtk_window_hide(GtkWidget*b,GtkWidget*window){
 	gtk_widget_hide(window);
 }
-
-int gtk_window_signup(inthread*inT){
+int gtk_window_signup(GtkWidget*b,inthread*inT){
+	inthread*nap;
+	nap->sign="signup";
+	nap->recv=inT->recv;
+	nap->send=inT->send;
 	GtkWidget* window;
 	GtkWidget* label_name;
 	GtkWidget* label_passwd;
@@ -57,24 +68,19 @@ int gtk_window_signup(inthread*inT){
 	
 	gtk_signal_connect((GtkObject*)button_quit,"clicked",G_CALLBACK(gtk_window_hide),window);//点击“取消”按钮退出
 	
+	nap->g1=entry_name;
+	nap->g2=entry_passwd;
+	gtk_signal_connect((GtkObject*)button_signup,"clicked",G_CALLBACK(commitmessage),nap);
 	//gtk_main();
 }
 
-
-int to_signup(){
-	gtk_window_signup();
-}
 int main_quit(GtkWidget*b,inthread*inT){
 	inT->send->confirm="Quit";
 }
-int commitsignin(GtkWidget*b,inthread*inT){
-
-	strcpy(inT->send->message,gtk_entry_get_text((GtkEntry*)(inT->g2)));
-	strcpy(inT->send->sender,gtk_entry_get_text((GtkEntry*)(inT->g1)));
-	strcpy(inT->send->confirm,"signin");
 
 void* gtk_window_signin(void*ino){
 	inthread*inT=(inthread*)ino;
+	inT->sign="signin";
 	GtkWidget* window;
 	GtkWidget* label_name;
 	GtkWidget* label_passwd;
@@ -116,31 +122,32 @@ void* gtk_window_signin(void*ino){
 	
 	gtk_signal_connect((GtkObject*)button_quit,"clicked",G_CALLBACK(main_quit),inT);
 
-	gtk_signal_connect((GtkObject*)button_signup,"clicked",G_CALLBACK(to_signup),NULL);
+	gtk_signal_connect((GtkObject*)button_signup,"clicked",G_CALLBACK(gtk_window_signup),inT);
 	g_signal_connect_swapped(G_OBJECT(window),"destroy",G_CALLBACK(gtk_main_quit),NULL);
-	inhtread*inthr;
+	inthread*inthr=inT;
 	inthr->g1=entry_name;
 	inthr->g2=entry_passwd;
-	gtk_signal_connect((GtkObject*)button_signin,"clicked",G_CALLBACK(commitsignin),inthr);
+	gtk_signal_connect((GtkObject*)button_signin,"clicked",G_CALLBACK(commitmessage),inthr);
 	gtk_main();
 }
 
 int gtk_window_yorn(){
 
 }
-void* commitmessage(GtkWidget*b,inthread*nai){
-
+/*void* commitmessage(GtkWidget*b,inthread*nai){
+	
 	strcpy(nai->send->recver,gtk_entry_get_text((GtkEntry*)(nai->g1)));	
 	strcpy(nai->send->message,gtk_entry_get_text((GtkEntry*)(nai->g2)));
-	strcpy(nai->send->confirm,"message");
+	strcpy(nai->send->confirm,nai->sign);
 	gtk_entry_set_text((GtkEntry*)(nai->g2),"");
-}
+}*/
 
 void* gtk_window_send(void*ino){
 	inthread*inT=(inthread*)malloc(sizeof(inthread));
 	inT=(inthread*)ino;
 	inT->argc=((inthread*)ino)->argc;
 	inT->argv=((inthread*)ino)->argv;
+	inT->sign="message";
 	GtkWidget* window=(GtkWidget*)malloc(sizeof(GtkWidget));
 	GtkWidget* label_name=(GtkWidget*)malloc(sizeof(GtkWidget));
 	GtkWidget* label_getm=(GtkWidget*)malloc(sizeof(GtkWidget));
@@ -188,7 +195,7 @@ void* gtk_window_send(void*ino){
 
 }
 //test
-//
+/*
 int main(int argc,char**argv){
 	inthread *ino=(inthread*)malloc(sizeof(inthread));;
 	ino->argc=&argc;
@@ -196,4 +203,4 @@ int main(int argc,char**argv){
 	gtk_window_send((void*)ino);
 	
 	return 0;
-}
+}*/
