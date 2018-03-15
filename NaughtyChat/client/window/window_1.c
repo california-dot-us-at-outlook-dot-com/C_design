@@ -4,12 +4,13 @@
 #include<sys/wait.h>
 #include<unistd.h>
 #include"../../head/dataform.h"
+#include<string.h>
 
 int gtk_window_hide(GtkWidget*b,GtkWidget*window){
 	gtk_widget_hide(window);
 }
 
-int gtk_window_signup(){
+int gtk_window_signup(inthread*inT){
 	GtkWidget* window;
 	GtkWidget* label_name;
 	GtkWidget* label_passwd;
@@ -66,6 +67,11 @@ int to_signup(){
 int main_quit(GtkWidget*b,inthread*inT){
 	inT->send->confirm="Quit";
 }
+int commitsignin(GtkWidget*b,inthread*inT){
+
+	strcpy(inT->send->message,gtk_entry_get_text((GtkEntry*)(inT->g2)));
+	strcpy(inT->send->sender,gtk_entry_get_text((GtkEntry*)(inT->g1)));
+	strcpy(inT->send->confirm,"signin");
 
 void* gtk_window_signin(void*ino){
 	inthread*inT=(inthread*)ino;
@@ -112,16 +118,82 @@ void* gtk_window_signin(void*ino){
 
 	gtk_signal_connect((GtkObject*)button_signup,"clicked",G_CALLBACK(to_signup),NULL);
 	g_signal_connect_swapped(G_OBJECT(window),"destroy",G_CALLBACK(gtk_main_quit),NULL);
+	inhtread*inthr;
+	inthr->g1=entry_name;
+	inthr->g2=entry_passwd;
+	gtk_signal_connect((GtkObject*)button_signin,"clicked",G_CALLBACK(commitsignin),inthr);
 	gtk_main();
 }
 
 int gtk_window_yorn(){
 
 }
+void* commitmessage(GtkWidget*b,inthread*nai){
+
+	strcpy(nai->send->recver,gtk_entry_get_text((GtkEntry*)(nai->g1)));	
+	strcpy(nai->send->message,gtk_entry_get_text((GtkEntry*)(nai->g2)));
+	strcpy(nai->send->confirm,"message");
+	gtk_entry_set_text((GtkEntry*)(nai->g2),"");
+}
+
+void* gtk_window_send(void*ino){
+	inthread*inT=(inthread*)malloc(sizeof(inthread));
+	inT=(inthread*)ino;
+	inT->argc=((inthread*)ino)->argc;
+	inT->argv=((inthread*)ino)->argv;
+	GtkWidget* window=(GtkWidget*)malloc(sizeof(GtkWidget));
+	GtkWidget* label_name=(GtkWidget*)malloc(sizeof(GtkWidget));
+	GtkWidget* label_getm=(GtkWidget*)malloc(sizeof(GtkWidget));
+	GtkWidget* entry_name=(GtkWidget*)malloc(sizeof(GtkWidget));
+	GtkWidget* entry_input=(GtkWidget*)malloc(sizeof(GtkWidget));
+	GtkWidget* button_commit=(GtkWidget*)malloc(sizeof(GtkWidget));
+	GtkWidget* button_quit=(GtkWidget*)malloc(sizeof(GtkWidget));
+	GtkWidget* button_list=(GtkWidget*)malloc(sizeof(GtkWidget));
+	//GtkWidget* other;
+	GtkWidget* table=(GtkWidget*)malloc(sizeof(GtkWidget));;
+	GtkWidget* button_message;
+	gtk_init(inT->argc,inT->argv);
+	button_message=gtk_button_new_with_label("历史消息");
+	window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(window),g_locale_to_utf8("发送消息",-1,NULL,NULL,NULL));
+	label_name=gtk_label_new("向此用户发送:");
+	label_getm=gtk_label_new("请输入消息:");
+	table=gtk_table_new(36,36,TRUE);
+	button_commit=gtk_button_new_with_label("发送");
+	entry_name=gtk_entry_new_with_max_length(16);
+	entry_input=gtk_entry_new_with_max_length(32);
+	button_quit=gtk_button_new_with_label("退出");
+	button_list=gtk_button_new_with_label("历史联系人");
+	
+	gtk_table_attach_defaults((GtkTable*)table,label_name,0,12,12,16);
+	gtk_table_attach_defaults((GtkTable*)table,label_getm,0,8,18,22);
+	gtk_table_attach_defaults((GtkTable*)table,entry_name,13,25,12,16);
+	gtk_table_attach_defaults((GtkTable*)table,entry_input,9,30,17,22);
+	gtk_table_attach_defaults((GtkTable*)table,button_commit,31,36,18,22);
+	gtk_table_attach_defaults((GtkTable*)table,button_list,26,34,12,16);
+	gtk_table_attach_defaults((GtkTable*)table,button_message,22,36,23,28);
+	gtk_table_attach_defaults((GtkTable*)table,button_quit,24,28,32,35);
+	gtk_widget_set_size_request(window,320,480);
+//	gtk_widget_set_size_request(entry_input,32,32);
+	gtk_container_add(GTK_CONTAINER(window),table);
+	//gtk_widget_show(table);
+	gtk_widget_show_all(window);
+	inthread *nai=(inthread*)malloc(sizeof(gtk_p));
+	nai->g1=entry_name;
+	nai->g2=entry_input;
+	nai->recv=inT->recv;
+	nai->send=inT->send;
+	gtk_signal_connect((GtkObject*)button_commit,"clicked",G_CALLBACK(commitmessage),nai);
+	gtk_main();
+
+}
 //test
-/*
+//
 int main(int argc,char**argv){
-	gtk_window_signin(&argc,&argv);
-	//gtk_window_signup(&argc,&argv);
+	inthread *ino=(inthread*)malloc(sizeof(inthread));;
+	ino->argc=&argc;
+	ino->argv=&argv;
+	gtk_window_send((void*)ino);
+	
 	return 0;
-}*/
+}

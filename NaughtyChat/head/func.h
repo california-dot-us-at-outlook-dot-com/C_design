@@ -7,6 +7,7 @@
 #include"dataform.h"
 int gtk_window_hide(GtkWidget*,GtkWidget*);
 int gtk_window_signup();
+void* gtk_window_send(void*);
 int to_signup();
 void* gtk_window_signin(void*);
 int movedata(int,datas*,datas*);
