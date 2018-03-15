@@ -20,6 +20,7 @@ typedef struct{
 	char ***argv;
 	datas* recv;
 	datas* send;
+	dataf sign;
 	GtkWidget* g1;
 	GtkWidget*g2;
 }inthread;

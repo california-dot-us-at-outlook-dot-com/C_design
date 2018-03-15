@@ -7,6 +7,8 @@
 #include<sys/wait.h>
 #include<unistd.h>
 #include<stdlib.h>
+//gtk_table_attach_defaults
+//g_signal_connect_swapped(G_OBJECT(window),"destroy",G_CALLBACK(gtk_main_quit),NULL);
 void func(GtkWidget *botton,gpointer entry){
 	g_print("CallBack Successfully!");
 	gtk_entry_set_text(entry,"你好哦");
