@@ -4,14 +4,14 @@
 #include<stdlib.h>
 #include<gtk/gtk.h>
 
-typedef char* dataf;
-typedef char* chatf;
+typedef char dataf;
+typedef char chatf;
 typedef struct{
-	dataf confirm;
+	dataf confirm[16];
 	int length;
-	dataf sender;
-	dataf recver;
-	chatf message;
+	dataf sender[16];
+	dataf recver[16];
+	chatf message[32];
 	dataf ender;
 }datas;
 
@@ -20,7 +20,7 @@ typedef struct{
 	char ***argv;
 	datas* recv;
 	datas* send;
-	dataf sign;
+	dataf sign[16];
 	GtkWidget* g1;
 	GtkWidget*g2;
 }inthread;

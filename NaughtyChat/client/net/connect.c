@@ -12,8 +12,9 @@
 #include"../../head/func.h"
 
 char* getip(){
-	char i[6];
-	return fgets(i,1,stdin);
+	char *i;
+	scanf("%s",i);
+	return i; 
 }
 
 int getconnect(char*ip){
@@ -34,11 +35,13 @@ int movedata(int sock,datas*datasend,datas*datarecv){
 	datas* tmpdata=(datas*)malloc(sizeof(datas));
 	while(1){
 		if(strcmp(datasend->confirm,"")!=0){
-			if(strcmp(datasend->confirm,"Quit")==0){
+			printf("\n\n\t%s",datasend->confirm);
+			printf("\n%d",strcmp(datasend->confirm,"Quit"));
+			if(strcmp(datasend->confirm,"Quit\n")==0){
 				return 0;
 			}
 			send(sock,datasend,sizeof(datas),0);
-			datasend->confirm="";
+			strcpy(datasend->confirm,"");
 		}	
 		recv(sock,tmpdata,sizeof(datas),0);
 		if(strcmp(tmpdata->confirm,"")!=0){

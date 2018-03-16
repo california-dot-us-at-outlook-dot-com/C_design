@@ -4,6 +4,7 @@
 #include<sys/wait.h>
 #include<unistd.h>
 #include"../../head/dataform.h"
+#include"../../head/func.h"
 #include<string.h>
 
 void* commitmessage(GtkWidget*b,inthread*nai){
@@ -14,12 +15,12 @@ void* commitmessage(GtkWidget*b,inthread*nai){
 	gtk_entry_set_text((GtkEntry*)(nai->g2),"");
 }
 
-int gtk_window_hide(GtkWidget*b,GtkWidget*window){
+int mgtk_window_hide(GtkWidget*b,GtkWidget*window){
 	gtk_widget_hide(window);
 }
-int gtk_window_signup(GtkWidget*b,inthread*inT){
-	inthread*nap;
-	nap->sign="signup";
+int mgtk_window_signup(GtkWidget*b,inthread*inT){
+	inthread*nap=(inthread*)malloc(sizeof(inthread));
+	strcpy(nap->sign,"signup");
 	nap->recv=inT->recv;
 	nap->send=inT->send;
 	GtkWidget* window;
@@ -30,12 +31,13 @@ int gtk_window_signup(GtkWidget*b,inthread*inT){
 	GtkWidget* button_signin;
 	GtkWidget* button_signup;
 	GtkWidget* other;
-	//gtk_init(argc,argv);//初始化图形界面显示环境
+	
+//	gtk_init(nap->argc,nap->argv);//初始化图形界面显示环境
 	window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	label_name=gtk_label_new("用户名：");
-	gtk_widget_show(label_name);
+//	gtk_widget_show(label_name);
 	label_passwd=gtk_label_new("密码：");
-	gtk_widget_show(label_passwd);
+//	gtk_widget_show(label_passwd);
 	gtk_window_set_title(GTK_WINDOW(window),g_locale_to_utf8("用户注册",-1,NULL,NULL,NULL));//设置窗口标题
 	GtkWidget* table=gtk_table_new(36,36,TRUE);
 	entry_name=gtk_entry_new_with_max_length(20);
@@ -66,7 +68,7 @@ int gtk_window_signup(GtkWidget*b,inthread*inT){
 
 	gtk_widget_show_all(window);	
 	
-	gtk_signal_connect((GtkObject*)button_quit,"clicked",G_CALLBACK(gtk_window_hide),window);//点击“取消”按钮退出
+	gtk_signal_connect((GtkObject*)button_quit,"clicked",G_CALLBACK(mgtk_window_hide),window);//点击“取消”按钮退出
 	
 	nap->g1=entry_name;
 	nap->g2=entry_passwd;
@@ -74,34 +76,42 @@ int gtk_window_signup(GtkWidget*b,inthread*inT){
 	//gtk_main();
 }
 
-int main_quit(GtkWidget*b,inthread*inT){
-	inT->send->confirm="Quit";
+void main_quit(GtkWidget*b,inthread*inT){
+	strcpy(inT->send->confirm,"Quit\n");
+	//printf("\n\n%s",inT->send->confirm);
 }
 
-void* gtk_window_signin(void*ino){
-	inthread*inT=(inthread*)ino;
-	inT->sign="signin";
+void* mgtk_window_signin(void*ino){
+	inthread*inT;
+	inT=(inthread*)ino;
+
+	inT->argc=((inthread*)ino)->argc;
+	inT->argv=((inthread*)ino)->argv;
+	inT->send=((inthread*)ino)->send;
+	strcpy(inT->sign,"signin");
 	GtkWidget* window;
+	GtkWidget* label_title;
 	GtkWidget* label_name;
 	GtkWidget* label_passwd;
 	GtkWidget* entry_name;
 	GtkWidget* entry_passwd;
 	GtkWidget* button_signin;
 	GtkWidget* button_signup;
-	GtkWidget* other;
+	GtkWidget* table;
+
 	gtk_init(inT->argc,inT->argv);//初始化图形界面显示环境
 	window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	label_name=gtk_label_new("用户名：");
-	gtk_widget_show(label_name);
+//	gtk_widget_show(label_name);
 	label_passwd=gtk_label_new("密码：");
-	gtk_widget_show(label_passwd);
-	gtk_window_set_title(GTK_WINDOW(window),g_locale_to_utf8("用户登入",-1,NULL,NULL,NULL));//设置窗口标题
-	GtkWidget* table=gtk_table_new(36,36,TRUE);
+//	gtk_widget_show(label_passwd);
+	gtk_window_set_title(GTK_WINDOW(window),"用户登入");//设置窗口标题
+	table=gtk_table_new(36,36,TRUE);
 	entry_name=gtk_entry_new_with_max_length(16);
 	entry_passwd=gtk_entry_new_with_max_length(16);
 	button_signin=gtk_button_new_with_label("登入");
 	button_signup=gtk_button_new_with_label("注册");
-	GtkWidget* label_title=gtk_label_new("聊天软件系统登入界面");
+	label_title=gtk_label_new("聊天软件系统登入界面");
 	GtkWidget* button_quit=gtk_button_new_with_label("退出");
 
 	gtk_table_attach_defaults((GtkTable*)table,label_title,8,28,6,10);
@@ -122,16 +132,17 @@ void* gtk_window_signin(void*ino){
 	
 	gtk_signal_connect((GtkObject*)button_quit,"clicked",G_CALLBACK(main_quit),inT);
 
-	gtk_signal_connect((GtkObject*)button_signup,"clicked",G_CALLBACK(gtk_window_signup),inT);
-	g_signal_connect_swapped(G_OBJECT(window),"destroy",G_CALLBACK(gtk_main_quit),NULL);
-	inthread*inthr=inT;
+	gtk_signal_connect((GtkObject*)button_signup,"clicked",G_CALLBACK(mgtk_window_signup),inT);
+	g_signal_connect_swapped(G_OBJECT(window),"destroy",G_CALLBACK(main_quit),inT);
+	inthread*inthr;
+	inthr=inT;
 	inthr->g1=entry_name;
 	inthr->g2=entry_passwd;
 	gtk_signal_connect((GtkObject*)button_signin,"clicked",G_CALLBACK(commitmessage),inthr);
 	gtk_main();
 }
 
-int gtk_window_yorn(){
+int mgtk_window_yorn(){
 
 }
 /*void* commitmessage(GtkWidget*b,inthread*nai){
@@ -142,12 +153,12 @@ int gtk_window_yorn(){
 	gtk_entry_set_text((GtkEntry*)(nai->g2),"");
 }*/
 
-void* gtk_window_send(void*ino){
+void* mgtk_window_send(void*ino){
 	inthread*inT=(inthread*)malloc(sizeof(inthread));
 	inT=(inthread*)ino;
 	inT->argc=((inthread*)ino)->argc;
 	inT->argv=((inthread*)ino)->argv;
-	inT->sign="message";
+	strcpy(inT->sign,"message");
 	GtkWidget* window=(GtkWidget*)malloc(sizeof(GtkWidget));
 	GtkWidget* label_name=(GtkWidget*)malloc(sizeof(GtkWidget));
 	GtkWidget* label_getm=(GtkWidget*)malloc(sizeof(GtkWidget));
@@ -160,7 +171,7 @@ void* gtk_window_send(void*ino){
 	GtkWidget* table=(GtkWidget*)malloc(sizeof(GtkWidget));;
 	GtkWidget* button_message;
 	gtk_init(inT->argc,inT->argv);
-	button_message=gtk_button_new_with_label("历史消息");
+	button_message=gtk_button_new_with_label("消息窗口");
 	window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window),g_locale_to_utf8("发送消息",-1,NULL,NULL,NULL));
 	label_name=gtk_label_new("向此用户发送:");
@@ -200,7 +211,7 @@ int main(int argc,char**argv){
 	inthread *ino=(inthread*)malloc(sizeof(inthread));;
 	ino->argc=&argc;
 	ino->argv=&argv;
-	gtk_window_send((void*)ino);
+	mgtk_window_send((void*)ino);
 	
 	return 0;
 }*/
