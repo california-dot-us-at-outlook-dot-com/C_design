@@ -6,6 +6,7 @@
 
 typedef char dataf;
 typedef char chatf;
+
 typedef struct{
 	dataf confirm[16];
 	int length;
@@ -32,6 +33,33 @@ typedef struct{
 	GtkWidget* g4;
 }gtk_p;
 
+typedef struct{
+	int nsock[64];
+	dataf client[64][16];
+	datas* send[64];
+	datas* recv[64];
+	pthread_t* ntid[64];
+}serverdata;
 
+typedef struct{
+	int sock;
+	char user[16];
+}user;
+typedef struct{
+	dataf user[16];
+	dataf passwd[32];
+}confirm;
 
+typedef struct{
+	int wp;
+	int rp;
+	datas* message[s64];
+}offlinemessage;
+offlinemessage *offline[s64];
+confirm* condata[64];
+serverdata* alldata;
+int nsock[64];
+datas *rdata;
+datas *sdata[64];
+#define s64 64
 #endif

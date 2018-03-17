@@ -98,6 +98,7 @@ void* mgtk_window_signin(void*ino){
 	GtkWidget* button_signin;
 	GtkWidget* button_signup;
 	GtkWidget* table;
+	inthread* inthr;
 
 	gtk_init(inT->argc,inT->argv);//初始化图形界面显示环境
 	window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -134,11 +135,10 @@ void* mgtk_window_signin(void*ino){
 
 	gtk_signal_connect((GtkObject*)button_signup,"clicked",G_CALLBACK(mgtk_window_signup),inT);
 	g_signal_connect_swapped(G_OBJECT(window),"destroy",G_CALLBACK(main_quit),inT);
-	inthread*inthr;
-	inthr=inT;
-	inthr->g1=entry_name;
-	inthr->g2=entry_passwd;
-	gtk_signal_connect((GtkObject*)button_signin,"clicked",G_CALLBACK(commitmessage),inthr);
+//	inthr=inT;
+//	inthr->g1=entry_name;
+//	inthr->g2=entry_passwd;
+//	gtk_signal_connect((GtkObject*)button_signin,"clicked",G_CALLBACK(commitmessage),inthr);
 	gtk_main();
 }
 

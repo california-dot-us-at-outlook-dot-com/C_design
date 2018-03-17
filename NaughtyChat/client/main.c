@@ -5,6 +5,7 @@
 #include<stdlib.h>
 #include<string.h>
 
+
 int main(int argc,char**argv){
 	datas*datarecv=(datas*)malloc(sizeof(datas*));
 	datas*datasend=(datas*)malloc(sizeof(datas*));
