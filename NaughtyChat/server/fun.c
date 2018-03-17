@@ -84,6 +84,7 @@ void* func(void*n){
 					strcpy(alldata->send[i]->confirm,"nosuchuser");//没有该用户，无法登入
 				}
 			}
+			strcpy(alldata->recv[i]->confirm,"");
 		}
 		//如果是注册，则保存用户信息
 		if(strcmp(alldata->recv[i]->confirm,"signup")==0){
@@ -92,8 +93,12 @@ void* func(void*n){
 					strcpy(condata[signup]->user,alldata->recv[i]->sender);
 					strcpy(condata[signup]->passwd,alldata->recv[i]->message);
 					condata[signup]->exist=1;
+					strcpy(alldata->send[i]->confirm,"signupS");
+					printf("注册成功\n");
+					break;
 				}
 			}
+			strcpy(alldata->recv[i]->confirm,"");
 		}
 
 
@@ -110,7 +115,7 @@ void* func(void*n){
 		}
 	
 	
-	
+		strcpy(alldata->recv[i]->confirm,"");
 	
 	
 	

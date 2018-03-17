@@ -82,14 +82,14 @@ void main_quit(GtkWidget*b,inthread*inT){
 }
 
 void* mgtk_window_signin(void*ino){
-	inthread*inT;
-	inT=(inthread*)ino;
+//	inthread*inT;
+//	inT=(inthread*)ino;
 
-	inT->argc=((inthread*)ino)->argc;
+/*	inT->argc=((inthread*)ino)->argc;
 	inT->argv=((inthread*)ino)->argv;
 	inT->send=((inthread*)ino)->send;
 	strcpy(inT->sign,"signin");
-	GtkWidget* window;
+*/	GtkWidget* window;
 	GtkWidget* label_title;
 	GtkWidget* label_name;
 	GtkWidget* label_passwd;
@@ -98,9 +98,10 @@ void* mgtk_window_signin(void*ino){
 	GtkWidget* button_signin;
 	GtkWidget* button_signup;
 	GtkWidget* table;
+	GtkWidget* button_quit;
 	inthread* inthr;
 
-	gtk_init(inT->argc,inT->argv);//初始化图形界面显示环境
+	gtk_init(((inthread*)ino)->argc,((inthread*)ino)->argv);//初始化图形界面显示环境
 	window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	label_name=gtk_label_new("用户名：");
 //	gtk_widget_show(label_name);
@@ -113,7 +114,7 @@ void* mgtk_window_signin(void*ino){
 	button_signin=gtk_button_new_with_label("登入");
 	button_signup=gtk_button_new_with_label("注册");
 	label_title=gtk_label_new("聊天软件系统登入界面");
-	GtkWidget* button_quit=gtk_button_new_with_label("退出");
+	button_quit=gtk_button_new_with_label("退出");
 
 	gtk_table_attach_defaults((GtkTable*)table,label_title,8,28,6,10);
 	gtk_table_attach_defaults((GtkTable*)table,label_name,6,12,12,16);
@@ -131,11 +132,12 @@ void* mgtk_window_signin(void*ino){
 
 	gtk_widget_show_all(window);
 	
-	gtk_signal_connect((GtkObject*)button_quit,"clicked",G_CALLBACK(main_quit),inT);
+/*	gtk_signal_connect((GtkObject*)button_quit,"clicked",G_CALLBACK(main_quit),inT);
 
 	gtk_signal_connect((GtkObject*)button_signup,"clicked",G_CALLBACK(mgtk_window_signup),inT);
 	g_signal_connect_swapped(G_OBJECT(window),"destroy",G_CALLBACK(main_quit),inT);
-//	inthr=inT;
+*/
+	//	inthr=inT;
 //	inthr->g1=entry_name;
 //	inthr->g2=entry_passwd;
 //	gtk_signal_connect((GtkObject*)button_signin,"clicked",G_CALLBACK(commitmessage),inthr);
