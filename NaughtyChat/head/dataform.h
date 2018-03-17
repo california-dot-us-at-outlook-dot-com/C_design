@@ -4,6 +4,7 @@
 #include<stdlib.h>
 #include<gtk/gtk.h>
 
+#define s64 64
 typedef char dataf;
 typedef char chatf;
 
@@ -33,6 +34,10 @@ typedef struct{
 	GtkWidget* g4;
 }gtk_p;
 
+
+
+//////////////////////////////////////////////////
+
 typedef struct{
 	int nsock[64];
 	dataf client[64][16];
@@ -48,6 +53,8 @@ typedef struct{
 typedef struct{
 	dataf user[16];
 	dataf passwd[32];
+//	dataf exist[16];
+	int exist;
 }confirm;
 
 typedef struct{
@@ -55,11 +62,16 @@ typedef struct{
 	int rp;
 	datas* message[s64];
 }offlinemessage;
+
+//////////////////////////////////////////
+
 offlinemessage *offline[s64];
 confirm* condata[64];
 serverdata* alldata;
 int nsock[64];
 datas *rdata;
 datas *sdata[64];
-#define s64 64
+
+
+
 #endif
