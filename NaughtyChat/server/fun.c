@@ -6,7 +6,7 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<string.h>
-#include"../head/dataform.h"
+#include"../head/dataser.h"
 #include"func.h"
 #include<errno.h>
 
@@ -27,17 +27,20 @@ int server_get_memory_init(){
 	for(int i=0;i<64;i++){
 		alldata->recv[i]=(datas*)malloc(sizeof(datas)*64);
 	}
+	for(int i=0;i<64;i++){
+		strcpy(alldata->send[i]->confirm,"");
+	}
 
 
 }
 
 void* func(void*n){
 	int i=*((int*)n);
-	
 
 	while(1){
-		int back=recv(alldata->nsock[i],alldata->recv[i],sizeof(alldata->recv[i]),0);
-		//如果是消息，则转发，离线储存
+		int back=recv(alldata->nsock[i],alldata->recv[i],sizeof(*(alldata->recv[i])),0);
+//		printf("%s\n",alldata->recv[i]->confirm);
+		//如果是消息，则转发，离线则储存
 		int getclient=0;
 		if(strcmp(alldata->recv[i]->confirm,"message")==0){
 			//先在在线用户中查找
@@ -70,50 +73,73 @@ void* func(void*n){
 		}
 		//if message，zhuanfa
 		//如果是登录，则验证密码并回复结果
+		int ifexist=0;
 		if(strcmp(alldata->recv[i]->confirm,"signin")==0){
 			for(int j=0;j<s64;j++){
 				if(strcmp(alldata->recv[i]->sender,condata[j]->user)==0){
+					ifexist=1;
 					if(strcmp(alldata->recv[i]->message,condata[j]->passwd)==0){
 						strcpy(alldata->send[i]->confirm,"signinS");//登入成功
+						break;
 					}
 					else{
 						strcpy(alldata->send[i]->confirm,"wrongpasswd");//密码错误
+						break;
 					}
 				}
-				else{
-					strcpy(alldata->send[i]->confirm,"nosuchuser");//没有该用户，无法登入
-				}
 			}
-			strcpy(alldata->recv[i]->confirm,"");
+			if(ifexist==0){
+				strcpy(alldata->send[i]->confirm,"nosuchuser");//没有该用户，无法登入
+				}
+			
+		//	strcpy(alldata->recv[i]->confirm,"");
 		}
 		//如果是注册，则保存用户信息
 		if(strcmp(alldata->recv[i]->confirm,"signup")==0){
-			for(int signup=0;signup<64;signup++){
-				if(condata[signup]->exist!=1){
-					strcpy(condata[signup]->user,alldata->recv[i]->sender);
-					strcpy(condata[signup]->passwd,alldata->recv[i]->message);
-					condata[signup]->exist=1;
-					strcpy(alldata->send[i]->confirm,"signupS");
-					printf("注册成功\n");
+			printf("signup_1");
+			int exist=0;
+			for(int e=0;e<64;e++){
+				if(strcmp(condata[e]->user,alldata->recv[i]->sender)==0){
+					exist=1;
 					break;
 				}
 			}
-			strcpy(alldata->recv[i]->confirm,"");
+			if(exist==0){
+				printf("signup_2");
+				for(int signup=0;signup<64;signup++){
+					if(condata[signup]->exist!=1){
+						strcpy(condata[signup]->user,alldata->recv[i]->sender);
+						strcpy(condata[signup]->passwd,alldata->recv[i]->message);
+						condata[signup]->exist=1;
+						strcpy(alldata->send[i]->confirm,"signupS");
+						printf("注册成功\n");
+						break;
+					}
+				}
+			}
+			else{
+				printf("signup_3");
+				strcpy(alldata->send[i]->confirm,"existed");
+			}
+			//strcpy(alldata->recv[i]->confirm,"");
+
 		}
 
 
 		//发送模块：如果send->confirm区域内有不为“”的内容，则发送
 		if(strcmp(alldata->send[i]->confirm,"")!=0){
+			printf("send_1");
 			send(alldata->nsock[i],alldata->send[i],sizeof(alldata->send[i]),0);
 			strcpy(alldata->send[i]->confirm,"");
+			printf("send_2");
 		}
 	
 		//如果socket连接断开，则释放资源
 	
-		if(back<0&&errno==EINTR){
+	/*	if(back<0&&errno==EINTR){
 			alldata->nsock[i]=-1;
 		}
-	
+	*/
 	
 		strcpy(alldata->recv[i]->confirm,"");
 	

@@ -7,7 +7,7 @@
 #include<stdlib.h>
 #include<errno.h>
 #include"func.h"
-#include"../head/dataform.h"
+#include"../head/dataser.h"
 
 
 int main(){

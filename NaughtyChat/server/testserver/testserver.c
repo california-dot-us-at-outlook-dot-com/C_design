@@ -7,7 +7,7 @@
 #include<unistd.h>
 #include<netinet/in.h>
 #include<arpa/inet.h>
-#include"../../head/dataform.h"
+#include"../../head/dataser.h"
 datas a;
 int main(){
 	struct sockaddr_in addr;
@@ -20,19 +20,26 @@ int main(){
 
 	connect(sock,(struct sockaddr*)(&addr),sizeof(struct sockaddr));
 
+//	strcpy(a.confirm,"are_you");
+//	strcpy(a.sender,"qwwww");
+//	strcpy(a.message,"qaeee");
+//	send(sock,&a,sizeof(a),0);
+	for(int i=0;i<5;i++){
 	strcpy(a.confirm,"signup");
-	strcpy(a.sender,"a");
-	strcpy(a.message,"a");
+	strcpy(a.sender,"uee");
+	strcpy(a.message,"eee");
 	send(sock,&a,sizeof(a),0);
-	//sleep(2);
+//	sleep(1);
 	recv(sock,&a,sizeof(a),0);
-	strcpy(a.confirm,"signin");
-	strcpy(a.sender,"a");
-	strcpy(a.message,"a");
-	send(sock,&a,sizeof(a),0);
+//	strcpy(a.confirm,"signin");
+//	strcpy(a.sender,"a");
+//	strcpy(a.message,"a");
+//	send(sock,&a,sizeof(a),0);
 	//sleep(2);
-	recv(sock,&a,sizeof(a),0);
+//	recv(sock,&a,sizeof(a),0);
 	
 	printf("\t%s\n",a.confirm);
-	
+	printf("\t%s\n",a.confirm);
+	printf("\t%s\n",a.confirm);
+	}
 }

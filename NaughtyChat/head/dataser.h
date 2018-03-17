@@ -2,7 +2,7 @@
 #define dataform_h
 #include<stdio.h>
 #include<stdlib.h>
-#include<gtk/gtk.h>
+
 
 #define s64 64
 typedef char dataf;
@@ -16,24 +16,6 @@ typedef struct{
 	chatf message[32];
 //	dataf ender;
 }datas;
-
-typedef struct{
-	int *argc;
-	char ***argv;
-	datas* recv;
-	datas* send;
-	dataf sign[16];
-	GtkWidget* g1;
-	GtkWidget*g2;
-}inthread;
-
-typedef struct{
-	GtkWidget* g1;
-	GtkWidget* g2;
-	GtkWidget* g3;
-	GtkWidget* g4;
-}gtk_p;
-
 
 
 //////////////////////////////////////////////////

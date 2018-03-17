@@ -32,10 +32,10 @@ int mgtk_window_signup(GtkWidget*b,inthread*inT){
 	GtkWidget* button_signup;
 	GtkWidget* other;
 	
-//	gtk_init(nap->argc,nap->argv);//初始化图形界面显示环境
+	gtk_init(nap->argc,nap->argv);//初始化图形界面显示环境
 	window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	label_name=gtk_label_new("用户名：");
-//	gtk_widget_show(label_name);
+	gtk_widget_show(label_name);
 	label_passwd=gtk_label_new("密码：");
 //	gtk_widget_show(label_passwd);
 	gtk_window_set_title(GTK_WINDOW(window),g_locale_to_utf8("用户注册",-1,NULL,NULL,NULL));//设置窗口标题
