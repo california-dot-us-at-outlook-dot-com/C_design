@@ -14,6 +14,19 @@ int quit;
 int *nargc;
 char***nargv;
 
+
+//发消息g窗口的组件
+	GtkWidget* table;            //(sizeof(GtkWidget));;
+	GtkWidget* button_message;
+	GtkWidget* window;            //(sizeof(GtkWidget));
+	GtkWidget* label_name;            //(sizeof(GtkWidget));
+	GtkWidget* label_getm;            //(sizeof(GtkWidget));
+	GtkWidget* entry_name;            //(sizeof(GtkWidget));
+	GtkWidget* entry_input;            //(sizeof(GtkWidget));
+	GtkWidget* button_commit;            //(sizeof(GtkWidget));
+	GtkWidget* button_quit;            //(sizeof(GtkWidget));
+	GtkWidget* button_list;   
+
 //登入窗口的组件
 GtkWidget*si_window;
 GtkWidget*si_label_name;
@@ -45,6 +58,15 @@ GtkWidget*su_button_quit;
 datas sedata;
 datas redata;
 
+
+
+void se_s_si_h(){
+    gdk_threads_enter();
+    gtk_widget_show_all(window);
+    gtk_widget_hide(si_window);
+    gdk_threads_leave();
+}
+
 void f_quit(){
     quit=1;
 }
@@ -62,8 +84,52 @@ int getconnect(char*ip){
 	
     return sock;
 }
+
+//套接字 sock
 int sock;
 ///////////////////////////////////////////////////
+void f_send_message(){
+    strcpy(sedata.confirm,"message");
+    gdk_threads_enter();
+    strcpy(sedata.sender,gtk_entry_get_text((GtkEntry*)entry_name));
+    strcpy(sedata.message,gtk_entry_get_text((GtkEntry*)entry_input));
+    
+    gdk_threads_leave();
+    send(sock,&sedata,sizeof(sedata),0);
+}
+
+void f_window_send(){
+
+	button_message=gtk_button_new_with_label("消息窗口");
+	window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(window),g_locale_to_utf8("发送消息",-1,NULL,NULL,NULL));
+	label_name=gtk_label_new("向此用户发送:");
+	label_getm=gtk_label_new("请输入消息:");
+	table=gtk_table_new(36,36,TRUE);
+	button_commit=gtk_button_new_with_label("发送");
+	entry_name=gtk_entry_new_with_max_length(16);
+	entry_input=gtk_entry_new_with_max_length(32);
+	button_quit=gtk_button_new_with_label("退出");
+	button_list=gtk_button_new_with_label("历史联系人");
+	
+	gtk_table_attach_defaults((GtkTable*)table,label_name,0,12,12,16);
+	gtk_table_attach_defaults((GtkTable*)table,label_getm,0,8,18,22);
+	gtk_table_attach_defaults((GtkTable*)table,entry_name,13,25,12,16);
+	gtk_table_attach_defaults((GtkTable*)table,entry_input,9,30,17,22);
+	gtk_table_attach_defaults((GtkTable*)table,button_commit,31,36,18,22);
+	gtk_table_attach_defaults((GtkTable*)table,button_list,26,34,12,16);
+	gtk_table_attach_defaults((GtkTable*)table,button_message,22,36,23,28);
+	gtk_table_attach_defaults((GtkTable*)table,button_quit,24,28,32,35);
+	gtk_widget_set_size_request(window,320,480);
+//	gtk_widget_set_size_request(entry_input,32,32);
+	gtk_container_add(GTK_CONTAINER(window),table);
+	//gtk_widget_show(table);
+	gtk_widget_show_all(window);
+
+	gtk_signal_connect((GtkObject*)button_commit,"clicked",G_CALLBACK(f_send_message),NULL);
+
+}
+
 
 void f_send_signup(){
     
@@ -235,6 +301,7 @@ int main(int argc,char**argv){
     gdk_threads_enter();
 
     f_window_signin();
+    f_window_send();
 //    f_window_signup();
 //    sleep(10);
     gtk_main();
