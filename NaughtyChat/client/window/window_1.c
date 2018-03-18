@@ -89,7 +89,9 @@ void* mgtk_window_signin(void*ino){
 	inT->argv=((inthread*)ino)->argv;
 	inT->send=((inthread*)ino)->send;
 	strcpy(inT->sign,"signin");
-*/	GtkWidget* window;
+*/	
+	gdk_threads_enter();
+	GtkWidget* window;
 	GtkWidget* label_title;
 	GtkWidget* label_name;
 	GtkWidget* label_passwd;

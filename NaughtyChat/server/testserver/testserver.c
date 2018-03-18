@@ -16,7 +16,7 @@ int main(){
 	bzero(&addr,sizeof(struct sockaddr_in));
 	addr.sin_family=AF_INET;
 	addr.sin_port=htons(56789);
-	addr.sin_addr.s_addr=inet_addr("127.0.0.1");
+	addr.sin_addr.s_addr=inet_addr("101.132.123.155");
 
 	connect(sock,(struct sockaddr*)(&addr),sizeof(struct sockaddr));
 
@@ -25,7 +25,7 @@ int main(){
 //	strcpy(a.message,"qaeee");
 //	send(sock,&a,sizeof(a),0);
 	for(int i=0;i<5;i++){
-	strcpy(a.confirm,"signup");
+	strcpy(a.confirm,"signin");
 	strcpy(a.sender,"uee");
 	strcpy(a.message,"eee");
 	send(sock,&a,sizeof(a),0);

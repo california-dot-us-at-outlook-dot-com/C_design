@@ -142,8 +142,8 @@ void f_send_signup(){
         gdk_threads_leave();
     }else{
         gdk_threads_enter();
-        strcpy(sedata.sender,gtk_entry_get_text((GtkEntry*)si_entry_name));
-        strcpy(sedata.message,gtk_entry_get_text((GtkEntry*)si_entry_passwd));
+        strcpy(sedata.sender,gtk_entry_get_text((GtkEntry*)su_entry_name));
+        strcpy(sedata.message,gtk_entry_get_text((GtkEntry*)su_entry_passwd));
         gdk_threads_leave();
         send(sock,&sedata,sizeof(sedata),0);
     }
@@ -171,7 +171,7 @@ void* f_window_signup(){
 	su_entry_name=gtk_entry_new_with_max_length(16);
 	su_entry_passwd=gtk_entry_new_with_max_length(16);
     su_entry_cpasswd=gtk_entry_new_with_max_length(16);
-    su_label_cpasswd=gtk_label_new("g重复密码：");
+    su_label_cpasswd=gtk_label_new("重复密码：");
 //  su_button_signin=gtk_button_new_with_label("登入");
 	su_button_signup=gtk_button_new_with_label("注册");
 	su_label_title=gtk_label_new("聊天软件系统注册界面");
@@ -263,14 +263,23 @@ void* f_window_signin(){
 ////////////////////////////////////////////////////////////////
 
 void* recv_message(void*i){
-    FILE*f;
+    char* sender=(char*)malloc(sizeof(char)*16);
+    char* message=(char*)malloc(sizeof(char)*32);
     while(1){
         recv(sock,&redata,sizeof(redata),0);
+
         if(strcmp(redata.confirm,"message")==0){
-            f=fopen("a.txt","a+");
-            fwrite(redata.message,sizeof(redata.message),1,f);
+            FILE*f=fopen("a.txt","a");
+//          fprintf(f,"%s -> ",redata.confirm);
+//	    fprintf(f,"%s ","hello,world");
+	    printf("%s",sender);
+	    printf("%s",message);
+	    fprintf(f,"%s",redata.confirm);
+            fprintf(f,"%s ",sender);
+            fprintf(f,"%s ",message);
             fclose(f);
-            system("firefox a.txt");
+            //system("firefox a.txt");
+	    strcpy(redata.confirm,"");
         }
     }
 }
@@ -285,7 +294,7 @@ int main(int argc,char**argv){
     conn=-1;
     while(1){
         printf("正在连接服务器\n");
-        if(((sock=getconnect("101.132.123.155"))>0)&&(conn==0)){
+        if(((sock=getconnect("127.0.0.1"))>0)&&(conn==0)){
             break;
         }
     }

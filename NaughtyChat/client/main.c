@@ -5,11 +5,11 @@
 #include<gtk/gtk.h>
 
 int main(int argc,char**argv){
-/*	if(!g_thread_supported()){
+	if(!g_thread_supported()){
 		g_thread_init(NULL);
 	}
 	gdk_threads_init();
-*/	gtk_init(&argc,&argv);
+	gtk_init(&argc,&argv);
 	datas*datarecv=(datas*)malloc(sizeof(datas*));
 	datas*datasend=(datas*)malloc(sizeof(datas*));
 	inthread inT;
