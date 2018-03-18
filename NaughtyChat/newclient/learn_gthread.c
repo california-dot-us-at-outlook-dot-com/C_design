@@ -32,14 +32,14 @@
         g_signal_connect (G_OBJECT (window), "destroy",G_CALLBACK(gtk_main_quit), NULL);  
           
         /*线程的初始化*/  
-        if(!g_thread_supported()) g_thread_init(NULL);  
-        gdk_threads_init();  
+//        if(!g_thread_supported()) g_thread_init(NULL);  
+//        gdk_threads_init();  
         /*创建线程*/  
-        g_thread_create((GThreadFunc)hello, NULL, FALSE, NULL);  
-          
-        gdk_threads_enter();  
+//        g_thread_create((GThreadFunc)hello, NULL, FALSE, NULL);  
+        hello();        
+//        gdk_threads_enter();  
         gtk_main ();  
-        gdk_threads_leave();     
+//        gdk_threads_leave();     
           
         return 0;  
     }  

@@ -42,8 +42,8 @@ GtkWidget*su_table;
 GtkWidget*su_button_quit;
 
 
-
-//datas recv;
+datas sedata;
+datas redata;
 
 void f_quit(){
     quit=1;
@@ -65,11 +65,94 @@ int getconnect(char*ip){
 int sock;
 ///////////////////////////////////////////////////
 
-void f_send_signin(){
+void f_send_signup(){
     
-    return;
+    strcpy(sedata.confirm,"signup");
+    gdk_threads_enter();
+    if(strcmp(gtk_entry_get_text((GtkEntry*)su_entry_passwd),gtk_entry_get_text((GtkEntry*)su_entry_cpasswd))!=0){
+        gdk_threads_enter();
+        gtk_entry_set_text((GtkEntry*)su_entry_cpasswd,"两次密码输入不一致！");
+        gdk_threads_leave();
+    }else{
+        gdk_threads_enter();
+        strcpy(sedata.sender,gtk_entry_get_text((GtkEntry*)si_entry_name));
+        strcpy(sedata.message,gtk_entry_get_text((GtkEntry*)si_entry_passwd));
+        gdk_threads_leave();
+        send(sock,&sedata,sizeof(sedata),0);
+    }
+    gdk_threads_leave();
 }
 
+void* si_s_su_h(){
+    
+    gdk_threads_enter();
+    gtk_widget_show_all(si_window);
+    gtk_widget_hide(su_window);
+    gdk_threads_leave();
+}
+//注册界面
+void* f_window_signup(){
+
+//	gtk_init(nargc,nargv);//初始化图形界面显示环境
+	su_window =gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	su_label_name=gtk_label_new("用户名：");
+//	gtk_widget_show(su_label_name);
+	su_label_passwd=gtk_label_new("密码：");
+//	gtk_widget_show(label_passwd);
+	gtk_window_set_title(GTK_WINDOW(su_window),g_locale_to_utf8("用户登入",-1,NULL,NULL,NULL));//设置窗口标题
+	su_table=gtk_table_new(36,36,TRUE);
+	su_entry_name=gtk_entry_new_with_max_length(16);
+	su_entry_passwd=gtk_entry_new_with_max_length(16);
+    su_entry_cpasswd=gtk_entry_new_with_max_length(16);
+    su_label_cpasswd=gtk_label_new("g重复密码：");
+//  su_button_signin=gtk_button_new_with_label("登入");
+	su_button_signup=gtk_button_new_with_label("注册");
+	su_label_title=gtk_label_new("聊天软件系统注册界面");
+	su_button_quit=gtk_button_new_with_label("退出");
+
+	gtk_table_attach_defaults((GtkTable*)su_table,su_label_title,8,28,6,10);
+	gtk_table_attach_defaults((GtkTable*)su_table,su_label_name,6,12,12,16);
+	gtk_table_attach_defaults((GtkTable*)su_table,su_label_passwd,6,12,18,22);
+	gtk_table_attach_defaults((GtkTable*)su_table,su_label_cpasswd,6,12,22,26);
+    gtk_table_attach_defaults((GtkTable*)su_table,su_entry_name,12,24,12,18);
+	gtk_table_attach_defaults((GtkTable*)su_table,su_entry_passwd,12,24,18,24);
+	gtk_table_attach_defaults((GtkTable*)su_table,su_entry_cpasswd,12,24,25,30);
+    gtk_table_attach_defaults((GtkTable*)su_table,su_button_signup,14,18,30,36);
+//	gtk_table_attach_defaults((GtkTable*)su_table,su_button_signin,18,23,30,36);
+	gtk_table_attach_defaults((GtkTable*)su_table,su_button_quit,26,29,30,36);
+	gtk_widget_set_size_request(su_window,480,320);
+
+	gtk_container_add(GTK_CONTAINER(su_window),su_table);
+
+	gtk_entry_set_visibility((GtkEntry*)su_entry_passwd,FALSE);
+
+//	gtk_widget_show_all(su_window);
+	
+	gtk_signal_connect((GtkObject*)su_button_quit,"clicked",G_CALLBACK(si_s_su_h),NULL);
+//    gtk_signal_connect((GtkObject*)su_button_signin,"clicked",G_CALLBACK(f_send_signin),NULL);
+	gtk_signal_connect((GtkObject*)su_button_signup,"clicked",G_CALLBACK(f_send_signup),NULL);
+	g_signal_connect_swapped(G_OBJECT(su_window),"destroy",G_CALLBACK(si_s_su_h),NULL);
+//	gtk_main();
+}
+
+void* su_s_si_h(){
+    f_window_signup();
+    gdk_threads_enter();
+    gtk_widget_show_all(su_window);
+    gtk_widget_hide(si_window);
+    gdk_threads_leave();
+}
+
+void f_send_signin(){
+    
+    strcpy(sedata.confirm,"signin");
+    gdk_threads_enter();
+    strcpy(sedata.sender,gtk_entry_get_text((GtkEntry*)si_entry_name));
+    strcpy(sedata.message,gtk_entry_get_text((GtkEntry*)si_entry_passwd));
+    
+    gdk_threads_leave();
+    send(sock,&sedata,sizeof(sedata),0);
+}
 //登录界面
 void* f_window_signin(){
 
@@ -104,16 +187,22 @@ void* f_window_signin(){
 
 	gtk_widget_show_all(si_window);
 	
-/*	gtk_signal_connect((GtkObject*)si_button_quit,"clicked",G_CALLBACK(f_quit),NULL);
+	gtk_signal_connect((GtkObject*)si_button_quit,"clicked",G_CALLBACK(gtk_main_quit),NULL);
     gtk_signal_connect((GtkObject*)si_button_signin,"clicked",G_CALLBACK(f_send_signin),NULL);
-	gtk_signal_connect((GtkObject*)si_button_signup,"clicked",G_CALLBACK(f_window_signup),NULL);
+	gtk_signal_connect((GtkObject*)si_button_signup,"clicked",G_CALLBACK(su_s_si_h),NULL);
 	g_signal_connect_swapped(G_OBJECT(si_window),"destroy",G_CALLBACK(gtk_main_quit),NULL);
-*///	gtk_main();
+//	gtk_main();
 }
 ////////////////////////////////////////////////////////////////
 
 
+
+
+
 int main(int argc,char**argv){
+    pthread_t *ntid=(pthread_t*)malloc(sizeof(pthread_t));
+
+    int i=0;
     conn=-1;
     while(1){
         printf("正在连接服务器\n");
@@ -125,7 +214,7 @@ int main(int argc,char**argv){
     nargc=&argc;
     nargv=&argv;
     quit=0;
-
+//    pthread_create(ntid,NULL,show_hidess,NULL);
     gtk_init(NULL,NULL);
     if(quit==1){
         return 0;
@@ -134,18 +223,25 @@ int main(int argc,char**argv){
 /*    if(!g_thread_supported()){
         g_thread_init(NULL); 
     } 
-    gdk_threads_init();  
- */     /*创建线程*/  
+    gdk_thread_init();  
+  */    /*创建线程*/  
 //    g_thread_create((GThreadFunc)recvm, NULL, FALSE, NULL);  
 //    g_thread_create((GThreadFunc)f_window_signin, NULL, FALSE, NULL);  
 //    g_thread_create((GThreadFunc)f_window_signup, NULL, FALSE, NULL);  
 //    g_thread_create((GThreadFunc)f_window_sendm, NULL, FALSE, NULL);  
 //    g_thread_create((GThreadFunc)f_window_xianshi, NULL, FALSE, NULL);  
-    f_window_signin();
 
+//    system("firefox");
     gdk_threads_enter();
+
+    f_window_signin();
+//    f_window_signup();
+//    sleep(10);
     gtk_main();
     gdk_threads_leave();
-
+        if(i<60){
+            return 0;
+        }
+    i++;
     return 0;
 }
