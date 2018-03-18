@@ -91,7 +91,8 @@ int sock;
 void f_send_message(){
     strcpy(sedata.confirm,"message");
     gdk_threads_enter();
-    strcpy(sedata.sender,gtk_entry_get_text((GtkEntry*)entry_name));
+    strcpy(sedata.sender,gtk_entry_get_text((GtkEntry*)si_entry_name));
+    strcpy(sedata.recver,gtk_entry_get_text((GtkEntry*)entry_name));
     strcpy(sedata.message,gtk_entry_get_text((GtkEntry*)entry_input));
     
     gdk_threads_leave();
@@ -261,13 +262,25 @@ void* f_window_signin(){
 }
 ////////////////////////////////////////////////////////////////
 
+void* recv_message(void*i){
+    FILE*f;
+    while(1){
+        recv(sock,&redata,sizeof(redata),0);
+        if(strcmp(redata.confirm,"message")==0){
+            f=fopen("a.txt","a+");
+            fwrite(redata.message,sizeof(redata.message),1,f);
+            fclose(f);
+            system("firefox a.txt");
+        }
+    }
+}
 
 
 
 
 int main(int argc,char**argv){
     pthread_t *ntid=(pthread_t*)malloc(sizeof(pthread_t));
-
+    pthread_t *mtid=(pthread_t*)malloc(sizeof(pthread_t));
     int i=0;
     conn=-1;
     while(1){
@@ -280,7 +293,8 @@ int main(int argc,char**argv){
     nargc=&argc;
     nargv=&argv;
     quit=0;
-//    pthread_create(ntid,NULL,show_hidess,NULL);
+    pthread_create(ntid,NULL,recv_message,NULL);
+    printf("recving\n");
     gtk_init(NULL,NULL);
     if(quit==1){
         return 0;
