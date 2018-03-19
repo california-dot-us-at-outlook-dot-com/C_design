@@ -26,6 +26,7 @@ typedef struct{
 	datas* send[64];
 	datas* recv[64];
 	pthread_t* ntid[64];
+	pthread_t* rtid[64];
 }serverdata;
 
 typedef struct{

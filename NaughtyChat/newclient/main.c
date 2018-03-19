@@ -15,7 +15,7 @@ int *nargc;
 char***nargv;
 
 
-//发消息g窗口的组件
+//发消息窗口的组件
 	GtkWidget* table;            //(sizeof(GtkWidget));;
 	GtkWidget* button_message;
 	GtkWidget* window;            //(sizeof(GtkWidget));
@@ -60,12 +60,6 @@ datas redata;
 
 
 
-void se_s_si_h(){
-    gdk_threads_enter();
-    gtk_widget_show_all(window);
-    gtk_widget_hide(si_window);
-    gdk_threads_leave();
-}
 
 void f_quit(){
     quit=1;
@@ -126,6 +120,7 @@ void f_window_send(){
 	gtk_container_add(GTK_CONTAINER(window),table);
 	//gtk_widget_show(table);
 	gtk_widget_show_all(window);
+//	gtk_widget_hide(window);
 
 	gtk_signal_connect((GtkObject*)button_commit,"clicked",G_CALLBACK(f_send_message),NULL);
 
@@ -157,6 +152,18 @@ void* si_s_su_h(){
     gtk_widget_hide(su_window);
     gdk_threads_leave();
 }
+
+void se_s_si_h(){
+	gdk_threads_enter();
+	f_window_send();
+    gdk_threads_leave();
+    gdk_threads_enter();
+//    gtk_widget_show(window);
+    gtk_widget_hide(si_window);
+    gdk_threads_leave();
+}
+
+
 //注册界面
 void* f_window_signup(){
 
@@ -272,17 +279,30 @@ void* recv_message(void*i){
         if(strcmp(redata.confirm,"message")==0){
 		strcpy(message,redata.message);
             FILE*f=fopen("a.txt","a");
-//          fprintf(f,"%s -> ",redata.confirm);
-//	    fprintf(f,"%s ","hello,world");
-	    printf("%s",sender);
-	    printf("%s",redata.message);
-	    fprintf(f,"%s ",redata.confirm);
-            fprintf(f,"%s ",redata.sender);
-            fprintf(f,"%s ",redata.message);
-            fclose(f);
+		fprintf(f,"%s ->",redata.sender);
+		fprintf(f,"%s : ",redata.recver);
+		fprintf(f,"%s\n",redata.message);
+		fclose(f);
             system("firefox a.txt");
 	    strcpy(redata.confirm,"");
         }
+	if(strcmp(redata.confirm,"signinS")==0){
+		gdk_threads_enter();
+		se_s_si_h();
+		gdk_threads_leave();
+	}
+	if(strcmp(redata.confirm,"signupS")==0){
+		gdk_threads_enter();
+		gtk_entry_set_text((GtkEntry*)su_entry_cpasswd,"注册成功");
+		gdk_threads_leave();
+	}
+	if(strcmp(redata.confirm,"sendS")==0){
+		FILE*f=fopen("a.txt","a");
+		fprintf(f,"%s ->",redata.sender);
+		fprintf(f,"%s : ",redata.recver);
+		fprintf(f,"%s\n",redata.message);
+		fclose(f);
+	}
     }
 }
 
@@ -326,7 +346,7 @@ int main(int argc,char**argv){
     gdk_threads_enter();
 
     f_window_signin();
-    f_window_send();
+//    f_window_send();
 //    f_window_signup();
 //    sleep(10);
     gtk_main();

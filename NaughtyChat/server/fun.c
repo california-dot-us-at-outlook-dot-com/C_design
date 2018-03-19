@@ -33,22 +33,30 @@ int server_get_memory_init(){
 
 
 }
+int back;
+void* recv_data(void*n){
+	int i=(*(int*)n);
+	while(1){
+		back=recv(alldata->nsock[i],alldata->recv[i],sizeof(*(alldata->recv[i])),0);
+	}
+}
 
 void* func(void*n){
 	
     int i=*((int*)n);
-    struct timeval timeout={1,0};
+/*    struct timeval timeout={1,0};
     //即timeout={4,0};或者timeout.tv_sec=4; timeout.tv_usec=0;
     //设置接收超时
     //setsockopt(sockfd,SOL_SOCKET,SO_RCVTIMEO,(char*)&timeout,sizeof(timeout));
     setsockopt(nsock[i],SOL_SOCKET,SO_RCVTIMEO,(char*)&timeout,sizeof(struct timeval));
-	
+*/	
     while(1){
-		int back=recv(alldata->nsock[i],alldata->recv[i],sizeof(*(alldata->recv[i])),0);
+//		int back=recv(alldata->nsock[i],alldata->recv[i],sizeof(*(alldata->recv[i])),0);
 //		printf("\n%s-\t%s-\t%s-\t%s-\n",alldata->recv[i]->confirm,alldata->recv[i]->sender,alldata->recv[i]->recver,alldata->recv[i]->message);
 		//如果是消息，则转发，离线则储存
 		int getclient=0;
 		if(strcmp(alldata->recv[i]->confirm,"message")==0){
+			send(alldata->nsock[i],alldata->recv[i],sizeof(datas),0);
 			
 			//先在在线用户中查找
 			for(int j=0;j<s64;j++){

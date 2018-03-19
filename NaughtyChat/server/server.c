@@ -34,6 +34,8 @@ int main(){
 		for(int i=0;i<s64;i++){
 			if(alldata->nsock[i]<0){
 				alldata->nsock[i]=accept(sock,(struct sockaddr*)(&addr),&addr_len);
+				alldata->rtid[i]=(pthread_t*)malloc(sizeof(pthread_t));
+				pthread_create(alldata->rtid[i],NULL,recv_data,&i);
 
 				alldata->ntid[i]=(pthread_t*)malloc(sizeof(pthread_t));
 				pthread_create(alldata->ntid[i],NULL,func,&i);
