@@ -266,19 +266,21 @@ void* recv_message(void*i){
     char* sender=(char*)malloc(sizeof(char)*16);
     char* message=(char*)malloc(sizeof(char)*32);
     while(1){
-        recv(sock,&redata,sizeof(redata),0);
+	sleep(1);
+        recv(sock,&redata,sizeof(datas),0);
 
         if(strcmp(redata.confirm,"message")==0){
+		strcpy(message,redata.message);
             FILE*f=fopen("a.txt","a");
 //          fprintf(f,"%s -> ",redata.confirm);
 //	    fprintf(f,"%s ","hello,world");
 	    printf("%s",sender);
-	    printf("%s",message);
-	    fprintf(f,"%s",redata.confirm);
-            fprintf(f,"%s ",sender);
-            fprintf(f,"%s ",message);
+	    printf("%s",redata.message);
+	    fprintf(f,"%s ",redata.confirm);
+            fprintf(f,"%s ",redata.sender);
+            fprintf(f,"%s ",redata.message);
             fclose(f);
-            //system("firefox a.txt");
+            system("firefox a.txt");
 	    strcpy(redata.confirm,"");
         }
     }
@@ -294,7 +296,7 @@ int main(int argc,char**argv){
     conn=-1;
     while(1){
         printf("正在连接服务器\n");
-        if(((sock=getconnect("127.0.0.1"))>0)&&(conn==0)){
+        if(((sock=getconnect("101.132.123.155"))>0)&&(conn==0)){
             break;
         }
     }

@@ -21,11 +21,11 @@ int server_get_memory_init(){
 	alldata=(serverdata*)malloc(sizeof(serverdata));
 	
 	for(int i=0;i<64;i++){
-		alldata->send[i]=(datas*)malloc(sizeof(datas)*64);
+		alldata->send[i]=(datas*)malloc(sizeof(datas));
 		strcpy(alldata->send[i]->confirm,"");
 	}
 	for(int i=0;i<64;i++){
-		alldata->recv[i]=(datas*)malloc(sizeof(datas)*64);
+		alldata->recv[i]=(datas*)malloc(sizeof(datas));
 	}
 	for(int i=0;i<64;i++){
 		strcpy(alldata->send[i]->confirm,"");
@@ -57,6 +57,7 @@ void* func(void*n){
 					strcpy(alldata->send[j]->confirm,alldata->recv[i]->confirm);
 					strcpy(alldata->recv[i]->confirm,"");
 					getclient=1;
+					printf("message:%s\n",alldata->send[j]->message);
 					break;
 				}
 			}
@@ -143,7 +144,7 @@ void* func(void*n){
 		//发送模块：如果send->confirm区域内有不为“”的内容，则发送
 		if(strcmp(alldata->send[i]->confirm,"")!=0){
 //			printf("send_1");
-			send(alldata->nsock[i],alldata->send[i],sizeof(alldata->send[i]),0);
+			send(alldata->nsock[i],alldata->send[i],sizeof(datas),0);
 			strcpy(alldata->send[i]->confirm,"");
 //			printf("send_2");
 		}
