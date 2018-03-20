@@ -279,7 +279,7 @@ void* recv_message(void*i){
 
         if(strcmp(redata.confirm,"message")==0){
 
-            FILE*f=fopen(redata.sender,"a");
+        FILE*f=fopen(redata.sender,"a");
 		fprintf(f,"%s ->",redata.sender);
 		fprintf(f,"%s : ",redata.recver);
 		fprintf(f,"%s\n",redata.message);

@@ -37,7 +37,7 @@ int back;
 void* recv_data(void*n){
 	int i=(*(int*)n);
 	while(1){
-		back=recv(alldata->nsock[i],alldata->recv[i],sizeof(*(alldata->recv[i])),0);
+		back=recv(alldata->nsock[i],alldata->recv[i],sizeof(datas),0);
 		if(strcmp(alldata->recv[i]->confirm,"")!=0){
 			printf("%s -> %s",alldata->recv[i]->confirm,alldata->recv[i]->message);
 		}
@@ -54,8 +54,8 @@ void* func(void*n){
     setsockopt(nsock[i],SOL_SOCKET,SO_RCVTIMEO,(char*)&timeout,sizeof(struct timeval));
 */	
     while(1){
-//		int back=recv(alldata->nsock[i],alldata->recv[i],sizeof(*(alldata->recv[i])),0);
-//		printf("\n%s-\t%s-\t%s-\t%s-\n",alldata->recv[i]->confirm,alldata->recv[i]->sender,alldata->recv[i]->recver,alldata->recv[i]->message);
+		back=recv(alldata->nsock[i],alldata->recv[i],sizeof(*(alldata->recv[i])),0);
+		printf("\n%s-\t%s-\t%s-\t%s-\n",alldata->recv[i]->confirm,alldata->recv[i]->sender,alldata->recv[i]->recver,alldata->recv[i]->message);
 		//如果是消息，则转发，离线则储存
 		int getclient=0;
 		if(strcmp(alldata->recv[i]->confirm,"message")==0){

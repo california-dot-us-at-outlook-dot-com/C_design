@@ -32,13 +32,14 @@ int main(){
 //	pthread_create(htid,NULL,handle_data,rdata);
 	while(1){
 		for(int i=0;i<s64;i++){
+			int a=i;
 			if(alldata->nsock[i]<0){
 				alldata->nsock[i]=accept(sock,(struct sockaddr*)(&addr),&addr_len);
-				alldata->rtid[i]=(pthread_t*)malloc(sizeof(pthread_t));
-				pthread_create(alldata->rtid[i],NULL,recv_data,&i);
+				// alldata->rtid[i]=(pthread_t*)malloc(sizeof(pthread_t));
+				// pthread_create(alldata->rtid[i],NULL,recv_data,&a);
 
 				alldata->ntid[i]=(pthread_t*)malloc(sizeof(pthread_t));
-				pthread_create(alldata->ntid[i],NULL,func,&i);
+				pthread_create(alldata->ntid[i],NULL,func,(void*)&a);
 				printf("\t%d\n\n",alldata->nsock[i]);
 			
 			}
