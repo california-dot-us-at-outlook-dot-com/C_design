@@ -38,6 +38,9 @@ void* recv_data(void*n){
 	int i=(*(int*)n);
 	while(1){
 		back=recv(alldata->nsock[i],alldata->recv[i],sizeof(*(alldata->recv[i])),0);
+		if(strcmp(alldata->recv[i]->confirm,"")!=0){
+			printf("%s -> %s",alldata->recv[i]->confirm,alldata->recv[i]->message);
+		}
 	}
 }
 

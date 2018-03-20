@@ -58,7 +58,17 @@ GtkWidget*su_button_quit;
 datas sedata;
 datas redata;
 
+//套接字 sock
+int sock;
 
+void* send_thread(void*i){
+    while(1){
+        if(strcmp(sedata.confirm,"")!=0){
+            send(sock,&sedata,sizeof(datas),0);
+			strcpy(sedata.confirm,"");
+        }
+    }
+}
 
 
 void f_quit(){
@@ -79,22 +89,25 @@ int getconnect(char*ip){
     return sock;
 }
 
-//套接字 sock
-int sock;
+
 ///////////////////////////////////////////////////
 void f_send_message(){
-    strcpy(sedata.confirm,"message");
+
     gdk_threads_enter();
+//    system("firefox https://baidu.com");
     strcpy(sedata.sender,gtk_entry_get_text((GtkEntry*)si_entry_name));
     strcpy(sedata.recver,gtk_entry_get_text((GtkEntry*)entry_name));
     strcpy(sedata.message,gtk_entry_get_text((GtkEntry*)entry_input));
-    
+	strcpy(sedata.confirm,"message");
+    system("firefox https://baidu.com");
     gdk_threads_leave();
-    send(sock,&sedata,sizeof(sedata),0);
+    // for(int i=0;i<8;i++){
+    //     send(sock,&sedata,sizeof(datas),0);
+    // }
 }
 
 void f_window_send(){
-	
+
 	button_message=gtk_button_new_with_label("消息窗口");
 	window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window),g_locale_to_utf8("发送消息",-1,NULL,NULL,NULL));
@@ -130,18 +143,20 @@ void f_window_send(){
 
 void f_send_signup(){
     
-    strcpy(sedata.confirm,"signup");
+
     gdk_threads_enter();
     if(strcmp(gtk_entry_get_text((GtkEntry*)su_entry_passwd),gtk_entry_get_text((GtkEntry*)su_entry_cpasswd))!=0){
         gdk_threads_enter();
         gtk_entry_set_text((GtkEntry*)su_entry_cpasswd,"两次密码输入不一致！");
         gdk_threads_leave();
     }else{
+
         gdk_threads_enter();
         strcpy(sedata.sender,gtk_entry_get_text((GtkEntry*)su_entry_name));
         strcpy(sedata.message,gtk_entry_get_text((GtkEntry*)su_entry_passwd));
+		strcpy(sedata.confirm,"signup");
         gdk_threads_leave();
-        send(sock,&sedata,sizeof(sedata),0);
+        // send(sock,&sedata,sizeof(sedata),0);
     }
     gdk_threads_leave();
 }
@@ -155,9 +170,9 @@ void* si_s_su_h(){
 }
 
 void se_s_si_h(){
-//	gdk_threads_enter();
+	gdk_threads_enter();
 	f_window_send();
-//    gdk_threads_leave();
+    gdk_threads_leave();
     gdk_threads_enter();
 //    gtk_widget_show(window);
     gtk_widget_hide(si_window);
@@ -174,7 +189,7 @@ void* f_window_signup(){
 //	gtk_widget_show(su_label_name);
 	su_label_passwd=gtk_label_new("密码：");
 //	gtk_widget_show(label_passwd);
-	gtk_window_set_title(GTK_WINDOW(su_window),g_locale_to_utf8("用户登入",-1,NULL,NULL,NULL));//设置窗口标题
+	gtk_window_set_title(GTK_WINDOW(su_window),g_locale_to_utf8("用户注册",-1,NULL,NULL,NULL));//设置窗口标题
 	su_table=gtk_table_new(36,36,TRUE);
 	su_entry_name=gtk_entry_new_with_max_length(16);
 	su_entry_passwd=gtk_entry_new_with_max_length(16);
@@ -220,13 +235,13 @@ void* su_s_si_h(){
 
 void f_send_signin(){
     
-    strcpy(sedata.confirm,"signin");
+
     gdk_threads_enter();
     strcpy(sedata.sender,gtk_entry_get_text((GtkEntry*)si_entry_name));
     strcpy(sedata.message,gtk_entry_get_text((GtkEntry*)si_entry_passwd));
-    
+    strcpy(sedata.confirm,"signin");
     gdk_threads_leave();
-    send(sock,&sedata,sizeof(sedata),0);
+    // send(sock,&sedata,sizeof(sedata),0);
 }
 //登录界面
 void* f_window_signin(){
@@ -304,19 +319,6 @@ void* recv_message(void*i){
 		fprintf(f,"%s\n",redata.message);
 		fclose(f);
 	}
-	if(strcmp(redata.confirm,"wrongpasswd")==0){
-		gdk_threads_enter();
-		gtk_entry_set_text((GtkEntry*)si_entry_name,"密码错误");
-		gdk_threads_leave();
-		gdk_threads_enter();
-		gtk_entry_set_text((GtkEntry*)si_entry_passwd,"");
-		gdk_threads_leave();
-	}
-	if(strcmp(redata.confirm,"nosuchuser")==0){
-		gdk_threads_enter();
-		gtk_entry_set_text((GtkEntry*)si_entry_name,"该用户尚未注册");
-		gdk_threads_leave();
-	}
     }
 }
 
@@ -338,6 +340,7 @@ int main(int argc,char**argv){
     nargc=&argc;
     nargv=&argv;
     quit=0;
+	pthread_create(mtid,NULL,send_thread,NULL);
     pthread_create(ntid,NULL,recv_message,NULL);
     printf("recving\n");
     gtk_init(NULL,NULL);
@@ -345,11 +348,11 @@ int main(int argc,char**argv){
         return 0;
     }
     /*线程的初始化*/  
-    // if(!g_thread_supported()){
-    //     g_thread_init(NULL); 
-    // } 
-    // g_thread_init();  
-      /*创建线程*/  
+/*    if(!g_thread_supported()){
+        g_thread_init(NULL); 
+    } 
+    gdk_thread_init();  
+  */    /*创建线程*/  
 //    g_thread_create((GThreadFunc)recvm, NULL, FALSE, NULL);  
 //    g_thread_create((GThreadFunc)f_window_signin, NULL, FALSE, NULL);  
 //    g_thread_create((GThreadFunc)f_window_signup, NULL, FALSE, NULL);  
