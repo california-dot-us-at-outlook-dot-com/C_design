@@ -156,7 +156,7 @@ void* si_s_su_h(){
 }
 
 void se_s_si_h(){
-	strcpy(self,gtk_entry_get_text((GtkWidget*)si_entry_name));
+	strcpy(self,gtk_entry_get_text((GtkEntry*)si_entry_name));
 	gdk_threads_enter();
 //	f_window_send();
 	gtk_widget_show(window);
@@ -313,44 +313,56 @@ void* recv_message(void*i){
 
         if(strcmp(redata.confirm,"message")==0){
 			if(strcmp(self,redata.sender)!=0){
-    	    	FILE*f=fopen(redata.sender,"a");
+				char ff[24];
+				strcpy(ff,redata.sender);
+				char ffox[32]="firefox ";
+				int l=0;
+				for(int i=0;i<sizeof(redata.sender);i++){
+					ff[i]=redata.sender[i];
+					l++;
+				}
+				
+				ff[l]='.';
+				ff[l+1]='h';
+				ff[l+2]='t';
+				ff[l+3]='m';
+				ff[l+4]='l';
+				FILE*f=fopen(ff,"a");
 				fprintf(f,"%s ->",redata.sender);
 				fprintf(f,"%s : ",redata.recver);
 				fprintf(f,"%s\n",redata.message);
 				fclose(f);
-				char ff[32]="firefox ";
+				for(int i=0;i<l+4;i++){
+					ffox[i+8]=ff[i];
+				}
+
+        		system(ffox);
+			}
+			else{
+				char ff[24];
+				strcpy(ff,redata.recver);
+				char ffox[32]="firefox ";
 				int l=0;
-				for(int i=8;i<sizeof(redata.sender);i++){
-					ff[i]=redata.sender[i-8];
+				for(int i=0;i<sizeof(redata.recver);i++){
+					ff[i]=redata.recver[i];
 					l++;
 				}
+				
 				ff[l]='.';
 				ff[l+1]='h';
 				ff[l+2]='t';
 				ff[l+3]='m';
 				ff[l+4]='l';
-
-        		system(ff);
-			}
-			else{
-				FILE*f=fopen(reata.recver,"a");
+				FILE*f=fopen(ff,"a");
 				fprintf(f,"%s ->",redata.sender);
 				fprintf(f,"%s : ",redata.recver);
 				fprintf(f,"%s\n",redata.message);
-
-				char ff[32]="firefox ";
-				int l=0;
-				for(int i=8;i<sizeof(redata.sender);i++){
-					ff[i]=redata.recver[i-8];
-					l++;
+				fclose(f);
+				for(int i=0;i<l+4;i++){
+					ffox[i+8]=ff[i];
 				}
-				ff[l]='.';
-				ff[l+1]='h';
-				ff[l+2]='t';
-				ff[l+3]='m';
-				ff[l+4]='l';
 
-        system(ff);
+        		system(ffox);
 			}
 		
 	    strcpy(redata.confirm,"");
