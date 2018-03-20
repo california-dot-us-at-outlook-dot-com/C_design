@@ -155,9 +155,10 @@ void* si_s_su_h(){
 }
 
 void se_s_si_h(){
-//	gdk_threads_enter();
-	f_window_send();
-//    gdk_threads_leave();
+	gdk_threads_enter();
+//	f_window_send();
+	gtk_widget_show(window);
+    gdk_threads_leave();
     gdk_threads_enter();
 //    gtk_widget_show(window);
     gtk_widget_hide(si_window);
@@ -267,6 +268,37 @@ void* f_window_signin(){
 	gtk_signal_connect((GtkObject*)si_button_signup,"clicked",G_CALLBACK(su_s_si_h),NULL);
 	g_signal_connect_swapped(G_OBJECT(si_window),"destroy",G_CALLBACK(gtk_main_quit),NULL);
 //	gtk_main();
+	button_message=gtk_button_new_with_label("消息窗口");
+	window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(window),g_locale_to_utf8("发送消息",-1,NULL,NULL,NULL));
+	label_name=gtk_label_new("向此用户发送:");
+	label_getm=gtk_label_new("请输入消息:");
+	table=gtk_table_new(36,36,TRUE);
+	button_commit=gtk_button_new_with_label("发送");
+	entry_name=gtk_entry_new_with_max_length(16);
+	entry_input=gtk_entry_new_with_max_length(32);
+	button_quit=gtk_button_new_with_label("退出");
+	button_list=gtk_button_new_with_label("历史联系人");
+	
+	gtk_table_attach_defaults((GtkTable*)table,label_name,0,12,12,16);
+	gtk_table_attach_defaults((GtkTable*)table,label_getm,0,8,18,22);
+	gtk_table_attach_defaults((GtkTable*)table,entry_name,13,25,12,16);
+	gtk_table_attach_defaults((GtkTable*)table,entry_input,9,30,17,22);
+	gtk_table_attach_defaults((GtkTable*)table,button_commit,31,36,18,22);
+	gtk_table_attach_defaults((GtkTable*)table,button_list,26,34,12,16);
+	gtk_table_attach_defaults((GtkTable*)table,button_message,22,36,23,28);
+	gtk_table_attach_defaults((GtkTable*)table,button_quit,24,28,32,35);
+	gtk_widget_set_size_request(window,320,480);
+//	gtk_widget_set_size_request(entry_input,32,32);
+	gtk_container_add(GTK_CONTAINER(window),table);
+	//gtk_widget_show(table);
+	gtk_widget_show_all(window);
+	gtk_widget_hide(window);
+//	gtk_widget_hide(window);
+
+	gtk_signal_connect((GtkObject*)button_commit,"clicked",G_CALLBACK(f_send_message),NULL);
+	gtk_signal_connect((GtkObject*)button_quit,"clicked",G_CALLBACK(gtk_main_quit),NULL);
+
 }
 ////////////////////////////////////////////////////////////////
 
@@ -284,7 +316,11 @@ void* recv_message(void*i){
 		fprintf(f,"%s : ",redata.recver);
 		fprintf(f,"%s\n",redata.message);
 		fclose(f);
-            system("firefox a.txt");
+		char ff[20]="firefox ";
+		for(int i=8;i<sizeof(redata.sender);i++){
+			ff[i]=redata.sender[i-8];
+		}
+        system(ff);
 	    strcpy(redata.confirm,"");
         }
 	if(strcmp(redata.confirm,"signinS")==0){

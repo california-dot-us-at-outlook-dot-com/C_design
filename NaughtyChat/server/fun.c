@@ -55,6 +55,7 @@ void* func(void*n){
 */	
     while(1){
 		back=recv(alldata->nsock[i],alldata->recv[i],sizeof(*(alldata->recv[i])),0);
+		
 		printf("\n%s-\t%s-\t%s-\t%s-\n",alldata->recv[i]->confirm,alldata->recv[i]->sender,alldata->recv[i]->recver,alldata->recv[i]->message);
 		//如果是消息，则转发，离线则储存
 		int getclient=0;
