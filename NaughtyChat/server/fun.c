@@ -39,7 +39,19 @@ void* recv_data(void*n){
 	while(1){
 		back=recv(alldata->nsock[i],alldata->recv[i],sizeof(datas),0);
 		if(strcmp(alldata->recv[i]->confirm,"")!=0){
-			printf("%s -> %s",alldata->recv[i]->confirm,alldata->recv[i]->message);
+//			printf("%s -> %s",alldata->recv[i]->confirm,alldata->recv[i]->message);
+		}
+	}
+}
+void* send_data(void*n){
+	int i=(*(int*)n);
+	while(1){
+				//发送模块：如果send->confirm区域内有不为“”的内容，则发送
+		if(strcmp(alldata->send[i]->confirm,"")!=0){
+			printf("send_1\n");
+			send(alldata->nsock[i],alldata->send[i],sizeof(datas),0);
+			strcpy(alldata->send[i]->confirm,"");
+//			printf("send_2");
 		}
 	}
 }
@@ -160,12 +172,12 @@ void* func(void*n){
 
 
 		//发送模块：如果send->confirm区域内有不为“”的内容，则发送
-		if(strcmp(alldata->send[i]->confirm,"")!=0){
-//			printf("send_1");
-			send(alldata->nsock[i],alldata->send[i],sizeof(datas),0);
-			strcpy(alldata->send[i]->confirm,"");
+		// if(strcmp(alldata->send[i]->confirm,"")!=0){
+		// 	printf("send_1\n");
+		// 	send(alldata->nsock[i],alldata->send[i],sizeof(datas),0);
+		// 	strcpy(alldata->send[i]->confirm,"");
 //			printf("send_2");
-		}
+		// }
 	
 		//如果socket连接断开，则释放资源
 	

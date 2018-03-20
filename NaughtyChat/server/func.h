@@ -16,6 +16,7 @@ int server_get_memory_init();
 
 void* recv_data(void*);
 
+void* send_data(void*);
 void* func(void*);
 
 #endif
