@@ -10,6 +10,7 @@
 #include"../head/dataform.h"
 
 int quit;
+char self[16];
 
 int *nargc;
 char***nargv;
@@ -155,6 +156,7 @@ void* si_s_su_h(){
 }
 
 void se_s_si_h(){
+	strcpy(self,gtk_entry_get_text((GtkWidget*)si_entry_name));
 	gdk_threads_enter();
 //	f_window_send();
 	gtk_widget_show(window);
@@ -310,17 +312,47 @@ void* recv_message(void*i){
         recv(sock,&redata,sizeof(datas),0);
 
         if(strcmp(redata.confirm,"message")==0){
+			if(strcmp(self,redata.sender)!=0){
+    	    	FILE*f=fopen(redata.sender,"a");
+				fprintf(f,"%s ->",redata.sender);
+				fprintf(f,"%s : ",redata.recver);
+				fprintf(f,"%s\n",redata.message);
+				fclose(f);
+				char ff[32]="firefox ";
+				int l=0;
+				for(int i=8;i<sizeof(redata.sender);i++){
+					ff[i]=redata.sender[i-8];
+					l++;
+				}
+				ff[l]='.';
+				ff[l+1]='h';
+				ff[l+2]='t';
+				ff[l+3]='m';
+				ff[l+4]='l';
 
-        FILE*f=fopen(redata.sender,"a");
-		fprintf(f,"%s ->",redata.sender);
-		fprintf(f,"%s : ",redata.recver);
-		fprintf(f,"%s\n",redata.message);
-		fclose(f);
-		char ff[20]="firefox ";
-		for(int i=8;i<sizeof(redata.sender);i++){
-			ff[i]=redata.sender[i-8];
-		}
+        		system(ff);
+			}
+			else{
+				FILE*f=fopen(reata.recver,"a");
+				fprintf(f,"%s ->",redata.sender);
+				fprintf(f,"%s : ",redata.recver);
+				fprintf(f,"%s\n",redata.message);
+
+				char ff[32]="firefox ";
+				int l=0;
+				for(int i=8;i<sizeof(redata.sender);i++){
+					ff[i]=redata.recver[i-8];
+					l++;
+				}
+				ff[l]='.';
+				ff[l+1]='h';
+				ff[l+2]='t';
+				ff[l+3]='m';
+				ff[l+4]='l';
+
         system(ff);
+			}
+		
 	    strcpy(redata.confirm,"");
         }
 	if(strcmp(redata.confirm,"signinS")==0){
