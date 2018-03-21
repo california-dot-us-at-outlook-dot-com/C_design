@@ -397,6 +397,21 @@ void* recv_message(void*i){
 		gtk_entry_set_text((GtkEntry*)si_entry_name,"该用户尚未注册");
 		gdk_threads_leave();
 	}
+	if(strcmp(redata.confirm,"existed")==0){
+		gdk_threads_enter();
+		gtk_entry_set_text((GtkEntry*)su_entry_name,"该用户已存在");
+		gdk_threads_leave();
+	}
+	if(strcmp(redata.confirm,"usernotfound")==0){
+		gdk_threads_enter();
+		gtk_entry_set_text((GtkEntry*)entry_name,"找不到该接收者");
+		gdk_threads_leave();
+	}
+	if(strcmp(redata.confirm,"offline")==0){
+		gdk_threads_enter();
+		gtk_entry_set_text((GtkEntry*)entry_name,"该用户不在线");
+		gdk_threads_leave();
+	}
     }
 }
 
@@ -437,9 +452,8 @@ int main(int argc,char**argv){
 //    g_thread_create((GThreadFunc)f_window_xianshi, NULL, FALSE, NULL);  
 
 //    system("firefox");
-    gdk_threads_enter();
-
     f_window_signin();
+    gdk_threads_enter();
 //    f_window_send();
 //    f_window_signup();
 //    sleep(10);

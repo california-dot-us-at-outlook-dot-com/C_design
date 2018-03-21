@@ -35,11 +35,13 @@ int main(){
 			int a=i;
 			if(alldata->nsock[i]<0){
 				alldata->nsock[i]=accept(sock,(struct sockaddr*)(&addr),&addr_len);
+				printf("accept到新client\n");
 				alldata->rtid[i]=(pthread_t*)malloc(sizeof(pthread_t));
-				pthread_create(alldata->rtid[i],NULL,send_data,&a);
-
+				int sof_a=pthread_create(alldata->rtid[i],NULL,send_data,&a);
+				printf("发送线程:%d\n",sof_a);
 				alldata->ntid[i]=(pthread_t*)malloc(sizeof(pthread_t));
-				pthread_create(alldata->ntid[i],NULL,func,(void*)&a);
+				int sof_b=pthread_create(alldata->ntid[i],NULL,func,(void*)&a);
+				printf("接收数据线程:%d\n",sof_b);
 				printf("\t%d\n\n",alldata->nsock[i]);
 			
 			}

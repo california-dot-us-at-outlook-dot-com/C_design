@@ -68,7 +68,7 @@ void* func(void*n){
     while(1){
 		back=recv(alldata->nsock[i],alldata->recv[i],sizeof(*(alldata->recv[i])),0);
 		
-		printf("\n%s-\t%s-\t%s-\t%s-\n",alldata->recv[i]->confirm,alldata->recv[i]->sender,alldata->recv[i]->recver,alldata->recv[i]->message);
+		// printf("\n%s-\t%s-\t%s-\t%s-\n",alldata->recv[i]->confirm,alldata->recv[i]->sender,alldata->recv[i]->recver,alldata->recv[i]->message);
 		//如果是消息，则转发，离线则储存
 		int getclient=0;
 		if(strcmp(alldata->recv[i]->confirm,"message")==0){
@@ -99,16 +99,17 @@ void* func(void*n){
 					if(strcmp(alldata->recv[i]->recver,condata[j]->user)==0){
 						
 							
-						memcpy(offline[j]->message[(offline[j]->wp)%64],alldata->recv[i],sizeof(datas));
-						(offline[j]->wp)++;
+//						memcpy(offline[j]->message[(offline[j]->wp)%64],alldata->recv[i],sizeof(datas));
+//						(offline[j]->wp)++;
 						getuser=1;
+						strcpy(alldata->send[i]->confirm,"offline");
 						break;
 
 					}
 				}
 				
 				if(getuser==0){
-					strcpy(alldata->send[i]->confirm,"usernotfound");
+					strcpy(alldata->send[i]->confirm,"usernotfound");//找不到接收者
 				}
 			}
 		}
@@ -157,6 +158,9 @@ void* func(void*n){
 						strcpy(condata[signup]->passwd,alldata->recv[i]->message);
 						condata[signup]->exist=1;
 						strcpy(alldata->send[i]->confirm,"signupS");
+						FILE*f=fopen("a.dat","a");
+						fwrite(condata[signup],sizeof(condata[signup]),1,f);
+						fclose(f);
 						printf("注册成功\n");
 						break;
 					}
